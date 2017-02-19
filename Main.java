@@ -20,6 +20,9 @@ import java.io.*;
 public class Main {
 	
 	// static variables and constants only here.
+	private static Iterator<String> setIter; //Iterator for the dictionary
+	private static ArrayList<String> ladder; //The ladder we return
+	private static String[] input; //input[0] is start, input[1] is end
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -37,12 +40,21 @@ public class Main {
 		initialize();
 		
 		// TODO methods to read in words, output ladder
+
+		//Test the keyboard parser:
+		/*
+		ArrayList<String> test = parse(kb);
+		System.out.println(test.toString());
+		*/
 	}
 	
 	public static void initialize() {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
+
+		setIter = null;
+		ladder = null;
 	}
 	
 	/**
@@ -51,17 +63,29 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-		// TO DO
-		return null;
+		ArrayList<String> ret = new ArrayList<String>();
+		System.out.println("Input two words to be tested"); //May have to delete this line later
+		String unformattedIn = keyboard.nextLine();
+		input = unformattedIn.split(" ");
+		if(input[0].equals("/quit") || input[1].equals("/quit")){
+			return ret; //empty ArrayList
+		} else {
+			ret.add(input[0].toUpperCase());
+			ret.add(input[1].toUpperCase());
+		}
+		return ret;
 	}
 	
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder.
-		// TODO some code
 		Set<String> dict = makeDictionary();
-		// TODO more code
+		setIter = dict.iterator();
+
+		if(setIter.next().equals(end)){
+
+		}
 		
 		return null; // replace this line later with real return
 	}
@@ -100,10 +124,9 @@ public class Main {
 	// Other private static methods here
 
 	public static int weight(String current, String end){
-		/**
-		 * Takes the current word and compares it to end
-		 * Returns an int of how many letters are the same and are in the same place
-		 */
+
+		 // Takes the current word and compares it to end
+		 // Returns an int of how many letters are the same and are in the same place
 
 		int weight = 0;
 		//We need indices so make character arrays
