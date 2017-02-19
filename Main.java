@@ -92,8 +92,30 @@ public class Main {
 	}
 	
 	public static void printLadder(ArrayList<String> ladder) {
-		
+		for(int i = 0; !ladder.isEmpty(); i++){
+			System.out.println(ladder.get(i));
+		}
 	}
 	// TODO
 	// Other private static methods here
+
+	public static int weight(String current, String end){
+		/**
+		 * Takes the current word and compares it to end
+		 * Returns an int of how many letters are the same and are in the same place
+		 */
+
+		int weight = 0;
+		//We need indices so make character arrays
+		char[] charCurrent = current.toCharArray();
+		char[] charEnd = end.toCharArray();
+
+		for(int i = 0; i < current.length(); i++){
+			if(charCurrent[i] == charEnd[i]){
+				weight++;
+			}
+		}
+
+		return weight;
+	}
 }
