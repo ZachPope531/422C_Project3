@@ -20,9 +20,11 @@ import java.io.*;
 public class Main {
 	
 	// static variables and constants only here.
-	private static Iterator<String> setIter; //Iterator for the dictionary
+	private static Iterator<String> dictIter; //Iterator for the dictionary
 	private static ArrayList<String> ladder; //The ladder we return
 	private static String[] input; //input[0] is start, input[1] is end
+	private static ArrayList<String> isExplored;
+	private static Queue<String> queue;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -46,15 +48,24 @@ public class Main {
 		ArrayList<String> test = parse(kb);
 		System.out.println(test.toString());
 		*/
+
+		//Test the isExplored method
+		/*
+		isExplored.add("Hello");
+		isExplored.add("World");
+		System.out.println(isExplored("Hello") + " " + isExplored("Blah"));
+		*/
 	}
 	
 	public static void initialize() {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
-
-		setIter = null;
-		ladder = null;
+		ladder = new ArrayList<String>();
+		isExplored = new ArrayList<String>();
+		queue = new LinkedList<String>();
+		Set<String> dict = makeDictionary();
+		dictIter = dict.iterator();
 	}
 	
 	/**
@@ -80,20 +91,17 @@ public class Main {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder.
-		Set<String> dict = makeDictionary();
-		setIter = dict.iterator();
 
-		if(setIter.next().equals(end)){
-
+		if(dictIter.next().equals(end)){
+			ladder.add(end);
+			return ladder;
 		}
 		
 		return null; // replace this line later with real return
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-		
-		// TODO some code
-		Set<String> dict = makeDictionary();
+
 		// TODO more code
 		
 		return null; // replace this line later with real return
@@ -140,5 +148,13 @@ public class Main {
 		}
 
 		return weight;
+	}
+
+	public static boolean isExplored(String current){
+		if(isExplored.contains(current)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
