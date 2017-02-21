@@ -14,6 +14,7 @@
 
 
 package assignment3;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 
@@ -24,7 +25,9 @@ public class Main {
 	private static ArrayList<String> ladder; //The ladder we return
 	private static String[] input; //input[0] is start, input[1] is end
 	private static ArrayList<String> isExplored;
-	private static Queue<String> queue;
+	private static ArrayList<String> dictArray;
+	private static ArrayList<String> dfsPotential;
+	private static int oldDifference;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -55,6 +58,11 @@ public class Main {
 		isExplored.add("World");
 		System.out.println(isExplored("Hello") + " " + isExplored("Blah"));
 		*/
+
+		ArrayList<String> parsedInput = parse(kb);
+		System.out.println(parsedInput.toString());
+		ArrayList<String> output = getWordLadderDFS(parsedInput.get(0), parsedInput.get(1));
+		System.out.println(output.toString());
 	}
 	
 	public static void initialize() {
@@ -63,9 +71,10 @@ public class Main {
 		// only once at the start of main.
 		ladder = new ArrayList<String>();
 		isExplored = new ArrayList<String>();
-		queue = new LinkedList<String>();
 		Set<String> dict = makeDictionary();
-		dictIter = dict.iterator();
+		dictArray = new ArrayList<String>(dict);
+		dfsPotential = new ArrayList<String>();
+		oldDifference = 0;
 	}
 	
 	/**
@@ -88,16 +97,27 @@ public class Main {
 	}
 	
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
-		
-		// Returned list should be ordered start to end.  Include start and end.
-		// Return empty list if no ladder.
 
-		if(dictIter.next().equals(end)){
-			ladder.add(end);
+		// Returned list should be ordered start to end.  Include start and end.
+		// Return the start and end words if no ladder
+
+		isExplored.add(start);
+
+		if(start.equals(end)) {
+			return ladder;
+		} else {
+				dfsPotential.clear();
+				populateDFSNeighborhood(start);
+				for (int i = 0; i < dfsPotential.size(); i++) {
+					String word = dfsPotential.get(i);
+					if (!isExplored(word)) {
+						System.out.println(word);
+						getWordLadderDFS(word, end);
+
+					}
+				}
 			return ladder;
 		}
-		
-		return null; // replace this line later with real return
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
@@ -131,10 +151,10 @@ public class Main {
 	// TODO
 	// Other private static methods here
 
-	public static int weight(String current, String end){
+	public static int difference(String current, String end){
 
 		 // Takes the current word and compares it to end
-		 // Returns an int of how many letters are the same and are in the same place
+		 // Returns an int of how many letters are different
 
 		int weight = 0;
 		//We need indices so make character arrays
@@ -142,7 +162,7 @@ public class Main {
 		char[] charEnd = end.toCharArray();
 
 		for(int i = 0; i < current.length(); i++){
-			if(charCurrent[i] == charEnd[i]){
+			if(charCurrent[i] != charEnd[i]){
 				weight++;
 			}
 		}
@@ -155,6 +175,17 @@ public class Main {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public static void populateDFSNeighborhood(String word){
+		Iterator<String> neighborIter = dictArray.iterator();
+
+		while(neighborIter.hasNext()){
+			String nextWord = neighborIter.next();
+			if(!nextWord.equals(word) && difference(nextWord, word) == 1 && !isExplored(nextWord)){
+				dfsPotential.add(nextWord);
+			}
 		}
 	}
 }
