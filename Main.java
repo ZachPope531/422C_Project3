@@ -28,7 +28,9 @@ public class Main {
 	private static ArrayList<String> dictArray;
 	private static ArrayList<String> dfsPotential;
 	private static int oldDifference;
-	
+	private static int dfsIterations = 0;
+    private static int counter = 0;
+    private static ArrayList<String> parsedInput;
 	public static void main(String[] args) throws Exception {
 		
 		Scanner kb;	// input Scanner for commands
@@ -59,10 +61,9 @@ public class Main {
 		System.out.println(isExplored("Hello") + " " + isExplored("Blah"));
 		*/
 
-		ArrayList<String> parsedInput = parse(kb);
-		System.out.println(parsedInput.toString());
+		parsedInput = parse(kb);
 		ArrayList<String> output = getWordLadderDFS(parsedInput.get(0), parsedInput.get(1));
-		System.out.println(output.toString());
+		printLadder(output);
 	}
 	
 	public static void initialize() {
@@ -106,17 +107,40 @@ public class Main {
 		if(start.equals(end)) {
 			return ladder;
 		} else {
-				dfsPotential.clear();
-				populateDFSNeighborhood(start);
-				for (int i = 0; i < dfsPotential.size(); i++) {
-					String word = dfsPotential.get(i);
-					if (!isExplored(word)) {
-						System.out.println(word);
-						getWordLadderDFS(word, end);
+            dfsPotential.clear();
+            populateDFSNeighborhood(start);
+            int index = 0;
+            int minDifference = end.length();
+            for (int i = 0; i < dfsPotential.size(); i++) {
+                String word = dfsPotential.get(i);
+                int difference = difference(word, end);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    index = i;
+                }
+            }
+            if(dfsPotential.size() > 0){
+                String word = dfsPotential.get(index);
+                if (!isExplored(word)) {
+                    counter++;
+                    getWordLadderDFS(word, end);
 
-					}
-				}
-			return ladder;
+                    dfsPotential.clear();
+                    dfsIterations++;
+                    populateDFSNeighborhood(word);
+                    if(isExplored(end)){
+                        ladder.add(word);
+                        counter--;
+                        if(counter == 0) {
+                            ladder.add(start);
+                            Collections.reverse(ladder);
+                            return ladder;
+                        }
+                        return ladder;
+                    }
+                }
+            }
+            return ladder;
 		}
 	}
 	
@@ -144,8 +168,13 @@ public class Main {
 	}
 	
 	public static void printLadder(ArrayList<String> ladder) {
-		for(int i = 0; !ladder.isEmpty(); i++){
-			System.out.println(ladder.get(i));
+		if(ladder.size() == 0){
+			System.out.println("no word ladder can be found between " + parsedInput.get(0).toLowerCase() + " and " + parsedInput.get(1).toLowerCase() + ".");
+		} else {
+			System.out.println("a " + (dfsIterations + 1) + "-rung ladder exists between " + parsedInput.get(0).toLowerCase() + " and " + parsedInput.get(1).toLowerCase() + ".");
+			for (int i = 0; i < ladder.size(); i++) {
+				System.out.println(ladder.get(i));
+			}
 		}
 	}
 	// TODO
