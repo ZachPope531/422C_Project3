@@ -25,12 +25,17 @@ public class Main {
 	private static ArrayList<String> ladder; //The ladder we return
 	private static String[] input; //input[0] is start, input[1] is end
 	private static ArrayList<String> isExplored;
+	private static ArrayList<String> isVisited;
 	private static ArrayList<String> dictArray;
 	private static ArrayList<String> dfsPotential;
+	private static ArrayList<String> bfsladder;
 	private static int oldDifference;
 	private static int dfsIterations = 0;
     private static int counter = 0;
     private static ArrayList<String> parsedInput;
+    private static Queue<String> q;
+
+    
 	public static void main(String[] args) throws Exception {
 		
 		Scanner kb;	// input Scanner for commands
@@ -62,7 +67,7 @@ public class Main {
 		*/
 
 		parsedInput = parse(kb);
-		ArrayList<String> output = getWordLadderDFS(parsedInput.get(0), parsedInput.get(1));
+		ArrayList<String> output = getWordLadderBFS(parsedInput.get(0), parsedInput.get(1));
 		printLadder(output);
 	}
 	
@@ -72,10 +77,13 @@ public class Main {
 		// only once at the start of main.
 		ladder = new ArrayList<String>();
 		isExplored = new ArrayList<String>();
+		isVisited = new ArrayList<String>();
 		Set<String> dict = makeDictionary();
 		dictArray = new ArrayList<String>(dict);
 		dfsPotential = new ArrayList<String>();
+		bfsladder = new ArrayList<String>();
 		oldDifference = 0;
+		q = new LinkedList<String>();
 	}
 	
 	/**
@@ -146,9 +154,50 @@ public class Main {
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
 
-		// TODO more code
+		Iterator<String> iter = dictArray.iterator();
+		int number = 0;
 		
-		return null; // replace this line later with real return
+		isVisited.add(start);
+		bfsladder.add(start);
+		String newWord;
+		String iterWord;
+		
+		while(iter.hasNext()){
+			newWord = iter.next();
+			
+			if(!newWord.equals(start) && difference(newWord, start) == 1 && !isVisited.contains(newWord)){
+				q.add(Integer.toString(number)+newWord);
+				number++;
+				isVisited.add(newWord);
+			}
+		}
+
+		
+		while(q.size() > 0){
+			newWord = q.remove();
+			if(newWord.equals(end))
+			{
+				bfsladder.add(newWord);
+				return bfsladder;
+			}
+		//	bfsladder.add(newWord);
+			
+			iter = dictArray.iterator();
+			while(iter.hasNext())
+			{
+				iterWord = iter.next();
+				if(!iterWord.equals(newWord) && difference(iterWord, newWord) == 1 && !isVisited.contains(iterWord)){
+						isVisited.add(iterWord);
+						q.add(iterWord);
+				}
+					
+			}
+		}
+
+		
+		
+		
+		return bfsladder; // replace this line later with real return
 	}
     
 	public static Set<String>  makeDictionary () {
