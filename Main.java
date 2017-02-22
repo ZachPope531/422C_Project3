@@ -52,10 +52,10 @@ public class Main {
 			if(parsedInput.isEmpty()){
 				break;
 			}
-			ArrayList<String> output = getWordLadderDFS(parsedInput.get(0), parsedInput.get(1));
-			printLadder(output);
-			//output = getWordLadderBFS(parsedInput.get(0), parsedInput.get(1));
+			//ArrayList<String> output = getWordLadderDFS(parsedInput.get(0), parsedInput.get(1));
 			//printLadder(output);
+			ArrayList<String> output = getWordLadderBFS(parsedInput.get(0), parsedInput.get(1));
+			printLadder(output);
 		}
 	}
 	
@@ -114,9 +114,9 @@ public class Main {
 		isExplored.add(word.value);
 
 		ArrayList<Node> localPotentialNodes = new ArrayList<Node>();
-		populateNodeNeighborhood(word, localPotentialNodes);
+		populateNodeNeighborhood(word, localPotentialNodes); //Since it's recursive we want it to be local
 
-		if(word.value.equals(end)){
+		if(word.value.equals(end)){ //Fill the ladder
 			for(Node temp : nodeLadder){
 				ladder.add(temp.value);
 			}
@@ -131,7 +131,7 @@ public class Main {
 				index = i;
 			}
 		}
-		if(localPotentialNodes.size() > 0){
+		if(localPotentialNodes.size() > 0){ //Efficiency search
 			Node node = localPotentialNodes.get(index);
 			if(!isExplored.contains(node.value)){
 				nodeLadder.add(word);
@@ -141,7 +141,7 @@ public class Main {
 			}
 		}
 
-		for(Node node : localPotentialNodes){
+		for(Node node : localPotentialNodes){ //Random search
 			if(!isExplored.contains(node.value)){
 				nodeLadder.add(word);
 				counter++;
@@ -150,62 +150,14 @@ public class Main {
 			}
 		}
 
-		if(counter==0){
+		if(counter == 0){ //Has the recursion finished?
 			ArrayList<String> ret = new ArrayList<>(ladder);
 			ladder.clear();
 			isExplored.clear();
+			nodeLadder.clear();
 			return ret;
 		}
 		return ladder;
-
-		/*
-		if(start.equals(end)) {
-			return ladder;
-		} else {
-            potential.clear();
-            populateNeighborhood(start);
-            int index = 0;
-            int minDifference = end.length();
-            for (int i = 0; i < potential.size(); i++) {
-                String word = potential.get(i);
-                int difference = difference(word, end);
-                if (difference < minDifference) {
-                    minDifference = difference;
-                    index = i;
-                }
-            }
-            if(potential.size() > 0){
-                String word = potential.get(index);
-                if (!isExplored(word)) {
-                    counter++;
-                    getWordLadderDFS(word, end);
-
-                    potential.clear();
-                    iterations++;
-                    populateNeighborhood(word);
-                    if(isExplored(end)){
-                        ladder.add(word);
-                        counter--;
-                        if(counter == 0) {
-                        	ladder.add(start);
-                            Collections.reverse(ladder);
-                            iterations--;
-                            ArrayList<String> ret = new ArrayList<String>(ladder);
-                            ladder.clear();
-                            isExplored.clear();
-                            return ret;
-                        }
-                        return ladder;
-                    }
-                }
-            } else {
-            	ladder.clear();
-            	return ladder;
-			}
-            return ladder;
-		}
-		*/
-
 
 	}
 	
